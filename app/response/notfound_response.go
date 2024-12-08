@@ -17,7 +17,7 @@ func NewNotfoundResponse(status string, message string) NotfoundResponse {
 	}
 }
 
-func HandlerNotFound(w http.ResponseWriter, enc *json.Encoder, message string) {
+func HandleNotFound(w http.ResponseWriter, enc *json.Encoder, message string) {
 	w.WriteHeader(http.StatusNotFound)
 	res := NewNotfoundResponse(http.StatusText(http.StatusNotFound), message)
 	enc.Encode(res)

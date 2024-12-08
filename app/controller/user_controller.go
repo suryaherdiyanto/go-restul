@@ -35,14 +35,14 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 	w.Header().Add("Content-Type", "application/json")
 
 	if err != err {
-		response.HandlerNotFound(w, enc, "Resource not found!")
+		response.HandleNotFound(w, enc, "Resource not found!")
 		return
 	}
 
 	user, ok := c.UserRepository.FindById(id)
 
 	if !ok {
-		response.HandlerNotFound(w, enc, "Resource not found!")
+		response.HandleNotFound(w, enc, "Resource not found!")
 		return
 	}
 
