@@ -5,6 +5,6 @@ type SuccessResponse struct {
 	Data   interface{} `json:"data"`
 }
 
-func NewSuccessResponse(status string, data interface{}) *SuccessResponse {
-	return &SuccessResponse{Status: status, Data: data}
+func NewSuccessResponse(status string, data interface{}) SuccessResponse {
+	return SuccessResponse{Status: status, Data: data}
 }
