@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-restful/app/repository"
 	"github.com/go-restful/app/request"
+	"github.com/go-restful/app/resource"
 	"github.com/go-restful/app/response"
 	"github.com/go-restful/helper"
 	"github.com/julienschmidt/httprouter"
@@ -31,7 +32,7 @@ func (c *UserController) Index(w http.ResponseWriter, r *http.Request, _ httprou
 
 	users := c.UserRepository.All(ctx)
 
-	res := response.NewSuccessResponse(response.NewUsersDataResponse(&users))
+	res := response.NewSuccessResponse(resource.NewUsersResource(&users))
 	response.JsonResponse(w, res)
 	fmt.Printf("%v \n", users)
 }
@@ -54,7 +55,7 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	res := response.NewSuccessResponse(response.NewUserDataResponse(&user))
+	res := response.NewSuccessResponse(resource.NewUserResource(&user))
 	response.JsonResponse(w, res)
 }
 
@@ -70,5 +71,5 @@ func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprou
 
 	user := c.UserRepository.Create(ctx, userRequest)
 
-	response.JsonResponse(w, response.NewCreatedResponse("User Created!", response.NewUserDataResponse(&user)))
+	response.JsonResponse(w, response.NewCreatedResponse("User Created!", resource.NewUserResource(&user)))
 }
