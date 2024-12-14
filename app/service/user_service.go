@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/go-restful/app/model"
 	"github.com/go-restful/app/repository"
@@ -60,7 +61,9 @@ func (userService *UserService) Create(ctx context.Context, data *request.UserRe
 	user.Id = int(id)
 	user.Email = data.Email
 	user.FirstName = data.FirstName
-	user.LastName = data.LastName.(sql.NullString)
+	user.LastName = helper.HandleNullString(data.LastName)
+	user.CreatedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	user.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
 
 	return user
 }
@@ -77,7 +80,9 @@ func (userService *UserService) Update(ctx context.Context, id int, data *reques
 	user.Id = id
 	user.Email = data.Email
 	user.FirstName = data.FirstName
-	user.LastName = data.LastName.(sql.NullString)
+	user.LastName = helper.HandleNullString(data.LastName)
+	user.CreatedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	user.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
 
 	return user
 }

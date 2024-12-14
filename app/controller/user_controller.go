@@ -2,13 +2,16 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/go-restful/app/repository"
+	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
+	"github.com/go-restful/helper"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -53,4 +56,19 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 
 	res := response.NewSuccessResponse(response.NewUserDataResponse(&user))
 	response.JsonResponse(w, res)
+}
+
+func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
+	defer cancel()
+
+	userRequest := &request.UserRequest{}
+	dec := json.NewDecoder(r.Body)
+	err := dec.Decode(userRequest)
+
+	helper.ErrorPanic(err)
+
+	user := c.UserRepository.Create(ctx, userRequest)
+
+	response.JsonResponse(w, response.NewCreatedResponse("User Created!", response.NewUserDataResponse(&user)))
 }

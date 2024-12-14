@@ -19,6 +19,6 @@ func (r *SuccessResponse) GetData() interface{} {
 	return r.Data
 }
 
-func NewSuccessResponse(data interface{}) *SuccessResponse {
+func NewSuccessResponse(data interface{}) Response {
 	return &SuccessResponse{Status: http.StatusOK, Data: data}
 }

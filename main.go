@@ -29,6 +29,7 @@ func main() {
 
 	router.GET("/api/users", userController.Index)
 	router.GET("/api/users/:id", userController.Show)
+	router.POST("/api/users", userController.Store)
 
 	server := &http.Server{
 		Addr:    ":5000",
