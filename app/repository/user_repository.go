@@ -1,14 +1,16 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/go-restful/app/model"
 	"github.com/go-restful/app/request"
 )
 
 type UserRepository interface {
-	FindById(id int) (model.User, bool)
-	All() []model.User
-	Create(data *request.UserRequest) model.User
-	Update(id int, data *request.UserRequest) (model.User, bool)
-	Delete(id int)
+	FindById(ctx context.Context, id int) (model.User, bool)
+	All(ctx context.Context) []model.User
+	Create(ctx context.Context, data *request.UserRequest) model.User
+	Update(ctx context.Context, id int, data *request.UserRequest) model.User
+	Delete(ctx context.Context, id int)
 }

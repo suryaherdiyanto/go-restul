@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-restful/app/repository"
 	"github.com/go-restful/app/response"
@@ -21,7 +23,10 @@ func NewUserController(userRepository repository.UserRepository) *UserController
 }
 
 func (c *UserController) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	users := c.UserRepository.All()
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
+	users := c.UserRepository.All(ctx)
 	dec := json.NewEncoder(w)
 
 	res := response.NewSuccessResponse(http.StatusText(http.StatusOK), response.NewUsersResponse(users))
@@ -30,6 +35,9 @@ func (c *UserController) Index(w http.ResponseWriter, r *http.Request, _ httprou
 }
 
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+	defer cancel()
+
 	id, err := strconv.Atoi(ps.ByName("id"))
 	enc := json.NewEncoder(w)
 	w.Header().Add("Content-Type", "application/json")
@@ -39,7 +47,7 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	user, ok := c.UserRepository.FindById(id)
+	user, ok := c.UserRepository.FindById(ctx, id)
 
 	if !ok {
 		response.HandleNotFound(w, enc, "Resource not found!")

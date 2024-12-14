@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/go-restful/app/model"
 	"github.com/go-restful/app/repository"
@@ -15,10 +14,8 @@ type UserService struct {
 	DB *sql.DB
 }
 
-func (userService *UserService) All() []model.User {
+func (userService *UserService) All(ctx context.Context) []model.User {
 	q := "select * from users"
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancle()
 
 	row, err := userService.DB.QueryContext(ctx, q)
 	helper.ErrorPanic(err)
@@ -34,10 +31,8 @@ func (userService *UserService) All() []model.User {
 	return users
 }
 
-func (userService *UserService) FindById(id int) (model.User, bool) {
+func (userService *UserService) FindById(ctx context.Context, id int) (model.User, bool) {
 	q := "select * from users where id = ? limit 1"
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancle()
 
 	row, err := userService.DB.QueryContext(ctx, q, id)
 	helper.ErrorPanic(err)
@@ -52,10 +47,8 @@ func (userService *UserService) FindById(id int) (model.User, bool) {
 	return model.User{}, false
 }
 
-func (userService *UserService) Create(data *request.UserRequest) model.User {
+func (userService *UserService) Create(ctx context.Context, data *request.UserRequest) model.User {
 	q := "insert into users(first_name,last_name,email,created_at,updated_at) values(?, ?, ?, now(), now())"
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancle()
 
 	row, err := userService.DB.ExecContext(ctx, q, data.FirstName, data.LastName, data.Email)
 	helper.ErrorPanic(err)
@@ -63,36 +56,34 @@ func (userService *UserService) Create(data *request.UserRequest) model.User {
 	id, err := row.LastInsertId()
 	helper.ErrorPanic(err)
 
-	user, _ := userService.FindById(int(id))
-
-	return user
-}
-
-func (userService *UserService) Update(id int, data *request.UserRequest) (model.User, bool) {
-	user, ok := userService.FindById(id)
-
-	if !ok {
-		return model.User{}, false
-	}
-
-	q := "update users set first_name=?, last_name=?, email=?, updated_at=now() where id = ?"
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancle()
-
-	_, err := userService.DB.ExecContext(ctx, q, data.FirstName, data.LastName, data.Email, user.Id)
-	helper.ErrorPanic(err)
-
+	user := model.User{}
+	user.Id = int(id)
 	user.Email = data.Email
 	user.FirstName = data.FirstName
 	user.LastName = data.LastName.(sql.NullString)
 
-	return user, true
+	return user
 }
 
-func (userService *UserService) Delete(id int) {
+func (userService *UserService) Update(ctx context.Context, id int, data *request.UserRequest) model.User {
+
+	q := "update users set first_name=?, last_name=?, email=?, updated_at=now() where id = ?"
+
+	_, err := userService.DB.ExecContext(ctx, q, data.FirstName, data.LastName, data.Email, id)
+	helper.ErrorPanic(err)
+
+	user := model.User{}
+
+	user.Id = id
+	user.Email = data.Email
+	user.FirstName = data.FirstName
+	user.LastName = data.LastName.(sql.NullString)
+
+	return user
+}
+
+func (userService *UserService) Delete(ctx context.Context, id int) {
 	q := "delete from users where id = ?"
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancle()
 
 	_, err := userService.DB.ExecContext(ctx, q, id)
 	helper.ErrorPanic(err)
