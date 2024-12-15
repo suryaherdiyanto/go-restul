@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/go-restful/app/model"
@@ -36,6 +37,22 @@ func (userService *UserService) FindById(ctx context.Context, id int) (model.Use
 	q := "select * from users where id = ? limit 1"
 
 	row, err := userService.DB.QueryContext(ctx, q, id)
+	helper.ErrorPanic(err)
+
+	if row.Next() {
+		var user model.User
+		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+
+		return user, true
+	}
+
+	return model.User{}, false
+}
+
+func (userService *UserService) FindBy(ctx context.Context, field string, value interface{}) (model.User, bool) {
+	q := fmt.Sprintf("select * from users where %s = ? limit 1", field)
+
+	row, err := userService.DB.QueryContext(ctx, q, value)
 	helper.ErrorPanic(err)
 
 	if row.Next() {
