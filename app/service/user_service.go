@@ -68,7 +68,7 @@ func (userService *UserService) Create(ctx context.Context, data *request.UserRe
 	return user
 }
 
-func (userService *UserService) Update(ctx context.Context, id int, data *request.UserRequest) model.User {
+func (userService *UserService) Update(ctx context.Context, id int, data *request.UserUpdateRequest) model.User {
 
 	q := "update users set first_name=?, last_name=?, email=?, updated_at=now() where id = ?"
 

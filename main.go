@@ -30,6 +30,8 @@ func main() {
 	router.GET("/api/users", userController.Index)
 	router.GET("/api/users/:id", userController.Show)
 	router.POST("/api/users", userController.Store)
+	router.PUT("/api/users/:id/update", userController.Update)
+	router.DELETE("/api/users/:id/delete", userController.Delete)
 
 	server := &http.Server{
 		Addr:    ":5000",

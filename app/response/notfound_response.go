@@ -29,7 +29,6 @@ func NewNotfoundResponse(message string) Response {
 }
 
 func HandleNotFound(w http.ResponseWriter, message string) {
-	w.WriteHeader(http.StatusNotFound)
 	res := NewNotfoundResponse(message)
 	JsonResponse(w, res)
 }

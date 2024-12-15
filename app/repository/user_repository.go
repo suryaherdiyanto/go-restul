@@ -11,6 +11,6 @@ type UserRepository interface {
 	FindById(ctx context.Context, id int) (model.User, bool)
 	All(ctx context.Context) []model.User
 	Create(ctx context.Context, data *request.UserRequest) model.User
-	Update(ctx context.Context, id int, data *request.UserRequest) model.User
+	Update(ctx context.Context, id int, data *request.UserUpdateRequest) model.User
 	Delete(ctx context.Context, id int)
 }
