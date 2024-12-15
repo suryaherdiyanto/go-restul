@@ -8,10 +8,12 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/go-restful/app/repository"
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/resource"
 	"github.com/go-restful/app/response"
+	"github.com/go-restful/app/validation"
 	"github.com/go-restful/helper"
 	"github.com/julienschmidt/httprouter"
 )
@@ -62,10 +64,21 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
 	defer cancel()
+	r.Header.Set("Content-Type", "application/json")
 
 	userRequest := &request.UserRequest{}
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(userRequest)
+
+	validate := validator.New()
+	err = validate.Struct(userRequest)
+
+	if err != nil {
+		validationErrors := err.(validator.ValidationErrors)
+		errors := validation.ParseErrors(&validationErrors)
+		response.JsonResponse(w, response.NewBadRequestResponse("Validation Error!", errors.Map()))
+		return
+	}
 
 	helper.ErrorPanic(err)
 
