@@ -6,7 +6,9 @@ import (
 )
 
 func JsonResponse(w http.ResponseWriter, res Response) {
-	enc := json.NewEncoder(w)
+	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(res.GetStatus())
+
+	enc := json.NewEncoder(w)
 	enc.Encode(res)
 }
