@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/go-restful/app/controller"
+	"github.com/go-restful/app/response"
 	"github.com/go-restful/app/service"
 	"github.com/go-restful/helper"
 	"github.com/julienschmidt/httprouter"
@@ -32,6 +33,10 @@ func main() {
 	router.POST("/api/users", userController.Store)
 	router.PUT("/api/users/:id/update", userController.Update)
 	router.DELETE("/api/users/:id/delete", userController.Delete)
+
+	router.PanicHandler = func(w http.ResponseWriter, r *http.Request, err interface{}) {
+		response.JsonResponse(w, response.NewInternalServerError("Something went wrong!", err))
+	}
 
 	server := &http.Server{
 		Addr:    ":5000",
