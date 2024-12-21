@@ -3,7 +3,6 @@ package controller
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -34,7 +33,6 @@ func (c *UserController) Index(w http.ResponseWriter, r *http.Request, _ httprou
 
 	res := response.NewSuccessResponse(resource.NewUsersResource(&users))
 	response.JsonResponse(w, res)
-	fmt.Printf("%v \n", users)
 }
 
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
