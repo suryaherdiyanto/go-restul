@@ -7,29 +7,48 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/go-restful/app/repository"
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
 	"github.com/go-restful/app/router"
 	"github.com/go-restful/app/service"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/julienschmidt/httprouter"
 )
 
-func TestIndex(t *testing.T) {
-	db, _ := sql.Open("mysql", "root:root@tcp(127.0.0.1)/gorestful_test")
-	err := databaseUp(db, "gorestful_test")
+var db *sql.DB
+var routes *httprouter.Router
+var userService repository.UserRepository
 
+func setupTest(tb testing.TB) func(tb testing.TB) {
+	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1)/gorestful_test")
 	if err != nil {
-		t.Error(err)
+		tb.Error(err)
 	}
 
-	userService := service.NewUserService(db)
+	routes = router.NewRouter(db)
+	err = databaseUp(db, "gorestful_test")
+
+	if err != nil {
+		tb.Error(err)
+	}
+
+	userService = service.NewUserService(db)
+
+	return func(tb testing.TB) {
+		databaseDown(db, "gorestful_test")
+	}
+}
+
+func TestIndex(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
 	userService.Create(context.Background(), &request.UserRequest{FirstName: "lala", LastName: "move", Email: "lalamove@gmail.com"})
-	router := router.NewRouter(db)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/users", nil)
-	router.ServeHTTP(w, req)
-	databaseDown(db, "gorestful_test")
+	routes.ServeHTTP(w, req)
 
 	if w.Code != 200 {
 		t.Errorf("Expected 200, but got %d", w.Code)
