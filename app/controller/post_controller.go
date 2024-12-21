@@ -71,7 +71,7 @@ func (c *PostController) Store(w http.ResponseWriter, r *http.Request, _ httprou
 
 	post := c.PostRepository.Create(ctx, postRequest)
 
-	response.JsonResponse(w, response.NewCreatedResponse("User Created!", resource.NewPostResource(&post)))
+	response.JsonResponse(w, response.NewCreatedResponse("Post Created!", resource.NewPostResource(&post)))
 }
 
 func (c *PostController) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

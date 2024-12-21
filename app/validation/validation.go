@@ -1,6 +1,9 @@
 package validation
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/go-restful/helper"
+)
 
 type ValidationError struct {
 	Message string
@@ -19,10 +22,11 @@ func (e *ErrorBag) Map() map[string][]string {
 	var errors = make(map[string][]string)
 
 	for _, err := range e.Errors {
-		if _, ok := errors[err.Field]; ok {
-			errors[err.Field] = append(errors[err.Field], err.Message)
+		field := helper.ToSnakeCase(err.Field)
+		if _, ok := errors[field]; ok {
+			errors[field] = append(errors[field], err.Message)
 		} else {
-			errors[err.Field] = []string{err.Message}
+			errors[field] = []string{err.Message}
 		}
 	}
 
@@ -37,13 +41,16 @@ func ParseErrors(err *validator.ValidationErrors) *ErrorBag {
 	var errorBag = newErrorBag()
 
 	for _, e := range *err {
+		field := helper.ToSnakeCase(e.Field())
 		switch e.Tag() {
 		case "required":
-			errorBag.addError(&ValidationError{Field: e.Field(), Message: "The " + e.Field() + " field is required."})
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " field is required."})
 		case "email":
-			errorBag.addError(&ValidationError{Field: e.Field(), Message: "The " + e.Field() + " field must be a valid email address."})
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " field must be a valid email address."})
+		case "max":
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " must have max length of " + e.Param()})
 		default:
-			errorBag.addError(&ValidationError{Field: e.Field(), Message: "The " + e.Field() + " field is invalid."})
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " field is invalid."})
 		}
 	}
 
