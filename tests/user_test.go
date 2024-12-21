@@ -7,12 +7,11 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/go-restful/app/controller"
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
+	"github.com/go-restful/app/router"
 	"github.com/go-restful/app/service"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/julienschmidt/httprouter"
 )
 
 func TestIndex(t *testing.T) {
@@ -25,10 +24,7 @@ func TestIndex(t *testing.T) {
 
 	userService := service.NewUserService(db)
 	userService.Create(context.Background(), &request.UserRequest{FirstName: "lala", LastName: "move", Email: "lalamove@gmail.com"})
-	userController := controller.NewUserController(userService)
-
-	router := httprouter.New()
-	router.GET("/api/users", userController.Index)
+	router := router.NewRouter(db)
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/users", nil)
