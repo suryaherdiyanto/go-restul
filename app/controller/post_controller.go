@@ -103,6 +103,11 @@ func (c *PostController) Delete(w http.ResponseWriter, r *http.Request, ps httpr
 	id, err := strconv.Atoi(ps.ByName("id"))
 	helper.ErrorPanic(err)
 
+	if _, ok := c.PostRepository.FindById(r.Context(), id); !ok {
+		response.HandleNotFound(w, "Resource not found!")
+		return
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
 	defer cancel()
 

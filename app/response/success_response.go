@@ -1,6 +1,10 @@
 package response
 
-import "net/http"
+import (
+	"encoding/json"
+	"io"
+	"net/http"
+)
 
 type SuccessResponse struct {
 	Status int         `json:"status"`
@@ -21,4 +25,9 @@ func (r *SuccessResponse) GetData() interface{} {
 
 func NewSuccessResponse(data interface{}) Response {
 	return &SuccessResponse{Status: http.StatusOK, Data: data}
+}
+
+func ParseSuccessResponse(body io.Reader, v *SuccessResponse) error {
+	dec := json.NewDecoder(body)
+	return dec.Decode(v)
 }
