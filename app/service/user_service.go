@@ -25,7 +25,7 @@ func (userService *UserService) All(ctx context.Context) []model.User {
 	var users []model.User
 	for row.Next() {
 		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 
 		users = append(users, user)
 	}
@@ -41,7 +41,7 @@ func (userService *UserService) FindById(ctx context.Context, id int) (model.Use
 
 	if row.Next() {
 		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 
 		return user, true
 	}
@@ -57,7 +57,7 @@ func (userService *UserService) FindBy(ctx context.Context, field string, value 
 
 	if row.Next() {
 		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
 
 		return user, true
 	}

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -71,6 +72,14 @@ func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprou
 		response.JsonResponse(w, response.NewBadRequestResponse("Validation Error!", validate.Map()))
 		return
 	}
+
+	if _, ok = c.UserRepository.FindBy(ctx, "email", userRequest.Email); ok {
+		response.JsonResponse(w, response.NewBadRequestResponse("Validation Error!", &map[string][]interface{}{
+			"email": {fmt.Sprintf("The email: %s, is already been taken", userRequest.Email)},
+		}))
+		return
+	}
+
 	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
 
 	helper.ErrorPanic(err)
