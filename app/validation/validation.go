@@ -49,6 +49,10 @@ func ParseErrors(err *validator.ValidationErrors) *ErrorBag {
 			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " field must be a valid email address."})
 		case "max":
 			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " must have max length of " + e.Param()})
+		case "min":
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " must have min length of " + e.Param()})
+		case "eqfield":
+			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " must be same with " + helper.ToSnakeCase(e.Param())})
 		default:
 			errorBag.addError(&ValidationError{Field: field, Message: "The " + field + " field is invalid."})
 		}

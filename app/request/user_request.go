@@ -4,18 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-
-	"github.com/go-restful/app/validation"
 )
 
-type JsonRequest interface {
-	Validate() (*validation.ErrorBag, bool)
-}
-
 type UserRequest struct {
-	FirstName string      `json:"first_name" validate:"required"`
-	LastName  interface{} `json:"last_name"`
-	Email     string      `json:"email" validate:"required,email"`
+	FirstName            string      `json:"first_name" validate:"required"`
+	LastName             interface{} `json:"last_name"`
+	Password             string      `json:"password" validate:"required,min=8,eqfield=PasswordConfirmation"`
+	PasswordConfirmation string      `json:"password_confirmation" validate:"required,min=8"`
+	Email                string      `json:"email" validate:"required,email"`
 }
 
 type UserUpdateRequest struct {

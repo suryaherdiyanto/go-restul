@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -13,6 +12,7 @@ import (
 	"github.com/go-restful/app/response"
 	"github.com/go-restful/helper"
 	"github.com/julienschmidt/httprouter"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserController struct {
@@ -60,11 +60,8 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
 	defer cancel()
-	r.Header.Set("Content-Type", "application/json")
 
-	userRequest := &request.UserRequest{}
-	dec := json.NewDecoder(r.Body)
-	err := dec.Decode(userRequest)
+	userRequest, err := request.NewUserRequest(r.Body)
 
 	helper.ErrorPanic(err)
 
@@ -74,6 +71,10 @@ func (c *UserController) Store(w http.ResponseWriter, r *http.Request, _ httprou
 		response.JsonResponse(w, response.NewBadRequestResponse("Validation Error!", validate.Map()))
 		return
 	}
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+
+	helper.ErrorPanic(err)
+	userRequest.Password = string(hashPassword)
 
 	user := c.UserRepository.Create(ctx, userRequest)
 

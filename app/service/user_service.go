@@ -66,9 +66,9 @@ func (userService *UserService) FindBy(ctx context.Context, field string, value 
 }
 
 func (userService *UserService) Create(ctx context.Context, data *request.UserRequest) model.User {
-	q := "insert into users(first_name,last_name,email,created_at,updated_at) values(?, ?, ?, now(), now())"
+	q := "insert into users(first_name,last_name,password,email,created_at,updated_at) values(?, ?, ?, ?, now(), now())"
 
-	row, err := userService.DB.ExecContext(ctx, q, data.FirstName, data.LastName, data.Email)
+	row, err := userService.DB.ExecContext(ctx, q, data.FirstName, data.LastName, data.Password, data.Email)
 	helper.ErrorPanic(err)
 
 	id, err := row.LastInsertId()
@@ -78,6 +78,7 @@ func (userService *UserService) Create(ctx context.Context, data *request.UserRe
 	user.Id = int(id)
 	user.Email = data.Email
 	user.FirstName = data.FirstName
+	user.Password = data.Password
 	user.LastName = helper.HandleNullString(data.LastName)
 	user.CreatedAt = sql.NullTime{Time: time.Now(), Valid: true}
 	user.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}

@@ -3,11 +3,11 @@ package model
 import "database/sql"
 
 type Post struct {
-	Id        int          `json:"id"`
-	Title     string       `json:"title"`
-	Category  string       `json:"category"`
-	Content   string       `json:"content"`
-	UserID    int          `json:"user_id"`
-	CreatedAt sql.NullTime `json:"created_at"`
-	UpdatedAt sql.NullTime `json:"updated_at"`
+	Id        int
+	Title     string
+	Category  string
+	Content   string
+	UserID    int
+	CreatedAt sql.NullTime
+	UpdatedAt sql.NullTime
 }
