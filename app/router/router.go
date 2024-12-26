@@ -16,10 +16,12 @@ func NewRouter(db *sql.DB) *httprouter.Router {
 
 	userController := controller.NewUserController(userService)
 	postController := controller.NewPostController(postService)
+	authController := controller.NewAuthController(userService)
+
+	router.POST("/api/auth/register", authController.Register)
 
 	router.GET("/api/users", userController.Index)
 	router.GET("/api/users/:id", userController.Show)
-	router.POST("/api/users", userController.Store)
 	router.PUT("/api/users/:id/update", userController.Update)
 	router.DELETE("/api/users/:id/delete", userController.Delete)
 
