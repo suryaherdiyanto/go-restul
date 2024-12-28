@@ -1,8 +1,6 @@
 package request
 
 import (
-	"encoding/json"
-	"fmt"
 	"io"
 )
 
@@ -22,26 +20,14 @@ type UserUpdateRequest struct {
 
 func NewUserRequest(body io.Reader) (*UserRequest, error) {
 	r := &UserRequest{}
-	dec := json.NewDecoder(body)
-	err := dec.Decode(r)
-
-	if err != nil {
-		return r, err
-	}
+	Parse(body, r)
 
 	return r, nil
 }
 
 func NewUserUpdateRequest(body io.Reader) (*UserUpdateRequest, error) {
 	r := &UserUpdateRequest{}
-	dec := json.NewDecoder(body)
-	err := dec.Decode(r)
-
-	if err != nil {
-		return r, err
-	}
-
-	fmt.Printf("%v", r)
+	Parse(body, r)
 
 	return r, nil
 }

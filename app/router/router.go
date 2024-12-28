@@ -19,6 +19,7 @@ func NewRouter(db *sql.DB) *httprouter.Router {
 	authController := controller.NewAuthController(userService)
 
 	router.POST("/api/auth/register", authController.Register)
+	router.POST("/api/auth/login", authController.Login)
 
 	router.GET("/api/users", userController.Index)
 	router.GET("/api/users/:id", userController.Show)
