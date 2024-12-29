@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/go-restful/app/controller"
+	"github.com/go-restful/app/middleware"
 	"github.com/go-restful/app/service"
 	"github.com/julienschmidt/httprouter"
 )
@@ -21,7 +22,7 @@ func NewRouter(db *sql.DB) *httprouter.Router {
 	router.POST("/api/auth/register", authController.Register)
 	router.POST("/api/auth/login", authController.Login)
 
-	router.GET("/api/users", userController.Index)
+	router.GET("/api/users", middleware.CheckAuth(userController.Index))
 	router.GET("/api/users/:id", userController.Show)
 	router.PUT("/api/users/:id/update", userController.Update)
 	router.DELETE("/api/users/:id/delete", userController.Delete)
