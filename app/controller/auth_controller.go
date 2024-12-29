@@ -85,10 +85,12 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request, _ httprou
 	helper.ErrorPanic(err)
 
 	cookie := &http.Cookie{
+		Name:     "refresh_token",
 		Value:    refreshToken,
 		Expires:  time.Now().Add(time.Hour * 24 * 7),
 		HttpOnly: true,
 		SameSite: http.SameSiteLaxMode,
+		Path:     "/",
 	}
 	http.SetCookie(w, cookie)
 
