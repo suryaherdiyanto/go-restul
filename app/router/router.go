@@ -23,15 +23,15 @@ func NewRouter(db *sql.DB) *httprouter.Router {
 	router.POST("/api/auth/login", authController.Login)
 
 	router.GET("/api/users", middleware.CheckAuth(userController.Index))
-	router.GET("/api/users/:id", userController.Show)
-	router.PUT("/api/users/:id/update", userController.Update)
-	router.DELETE("/api/users/:id/delete", userController.Delete)
+	router.GET("/api/users/:id", middleware.CheckAuth(userController.Show))
+	router.PUT("/api/users/:id/update", middleware.CheckAuth(userController.Update))
+	router.DELETE("/api/users/:id/delete", middleware.CheckAuth(userController.Delete))
 
-	router.GET("/api/posts", postController.Index)
-	router.GET("/api/posts/:id", postController.Show)
-	router.POST("/api/posts", postController.Store)
-	router.PUT("/api/posts/:id/update", postController.Update)
-	router.DELETE("/api/posts/:id/delete", postController.Delete)
+	router.GET("/api/posts", middleware.CheckAuth(postController.Index))
+	router.GET("/api/posts/:id", middleware.CheckAuth(postController.Show))
+	router.POST("/api/posts", middleware.CheckAuth(postController.Store))
+	router.PUT("/api/posts/:id/update", middleware.CheckAuth(postController.Update))
+	router.DELETE("/api/posts/:id/delete", middleware.CheckAuth(postController.Delete))
 
 	return router
 }
