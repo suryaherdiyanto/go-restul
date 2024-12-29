@@ -10,8 +10,9 @@ import (
 type PostRepository interface {
 	FindById(ctx context.Context, id int) (model.Post, bool)
 	FindBy(ctx context.Context, field string, value interface{}) (model.Post, bool)
+	FilterBy(ctx context.Context, field string, value interface{}) []model.Post
 	All(ctx context.Context) []model.Post
-	Create(ctx context.Context, data *request.PostRequest) model.Post
-	Update(ctx context.Context, id int, data *request.PostUpdateRequest) model.Post
+	Create(ctx context.Context, userId int, data *request.PostRequest) model.Post
+	Update(ctx context.Context, userId int, id int, data *request.PostUpdateRequest) model.Post
 	Delete(ctx context.Context, id int)
 }

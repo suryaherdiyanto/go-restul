@@ -1,11 +1,14 @@
 package tests
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 
+	"github.com/go-faker/faker/v4"
 	"github.com/go-restful/app/controller"
 	"github.com/go-restful/app/repository"
+	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/service"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -30,6 +33,12 @@ func setupTest(tb testing.TB) func(tb testing.TB) {
 	}
 
 	userService = service.NewUserService(db)
+	userService.Create(context.Background(), &request.UserRequest{
+		FirstName: faker.FirstName(),
+		LastName:  faker.LastName(),
+		Email:     faker.Email(),
+		Password:  "password",
+	})
 	userController = controller.NewUserController(userService)
 	authController = controller.NewAuthController(userService)
 

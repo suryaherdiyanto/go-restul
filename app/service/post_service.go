@@ -52,6 +52,22 @@ func (postService *PostService) FindById(ctx context.Context, id int) (model.Pos
 	return model.Post{}, false
 }
 
+func (ps *PostService) FilterBy(ctx context.Context, field string, value interface{}) []model.Post {
+	q := fmt.Sprintf("select * from %s where %s = ?", ps.TableName, field)
+
+	row, err := ps.DB.QueryContext(ctx, q, value)
+	helper.ErrorPanic(err)
+	var posts []model.Post
+
+	for row.Next() {
+		var post model.Post
+		row.Scan(&post.Id, &post.Title, &post.Category, &post.UserID, &post.Content, &post.CreatedAt, &post.UpdatedAt)
+		posts = append(posts, post)
+	}
+
+	return posts
+}
+
 func (postService *PostService) FindBy(ctx context.Context, field string, value interface{}) (model.Post, bool) {
 	q := fmt.Sprintf("select * from %s where %s = ? limit 1", postService.TableName, field)
 
@@ -68,10 +84,10 @@ func (postService *PostService) FindBy(ctx context.Context, field string, value 
 	return model.Post{}, false
 }
 
-func (postService *PostService) Create(ctx context.Context, data *request.PostRequest) model.Post {
+func (postService *PostService) Create(ctx context.Context, userId int, data *request.PostRequest) model.Post {
 	q := fmt.Sprintf("insert into %s (title, category, user_id, content, created_at, updated_at) values (?, ?, ?, ?, now(), now())", postService.TableName)
 
-	row, err := postService.DB.ExecContext(ctx, q, data.Title, data.Category, data.UserID, data.Content)
+	row, err := postService.DB.ExecContext(ctx, q, data.Title, data.Category, userId, data.Content)
 	helper.ErrorPanic(err)
 
 	id, err := row.LastInsertId()
@@ -81,7 +97,7 @@ func (postService *PostService) Create(ctx context.Context, data *request.PostRe
 	post.Id = int(id)
 	post.Title = data.Title
 	post.Category = data.Category
-	post.UserID = data.UserID
+	post.UserID = userId
 	post.Content = data.Content
 	post.CreatedAt = sql.NullTime{Time: time.Now(), Valid: true}
 	post.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
@@ -89,18 +105,18 @@ func (postService *PostService) Create(ctx context.Context, data *request.PostRe
 	return post
 }
 
-func (postService *PostService) Update(ctx context.Context, id int, data *request.PostUpdateRequest) model.Post {
+func (postService *PostService) Update(ctx context.Context, id int, userId int, data *request.PostUpdateRequest) model.Post {
 
 	q := fmt.Sprintf("update %s set title = ?, category = ?, user_id = ?, content = ?, updated_at = now() where id = ?", postService.TableName)
 
-	_, err := postService.DB.ExecContext(ctx, q, data.Title, data.Category, data.UserID, data.Content, id)
+	_, err := postService.DB.ExecContext(ctx, q, data.Title, data.Category, userId, data.Content, id)
 	helper.ErrorPanic(err)
 
 	post := model.Post{}
 	post.Id = int(id)
 	post.Title = data.Title
 	post.Category = data.Category
-	post.UserID = data.UserID
+	post.UserID = userId
 	post.Content = data.Content
 	post.CreatedAt = sql.NullTime{Time: time.Now(), Valid: true}
 	post.UpdatedAt = sql.NullTime{Time: time.Now(), Valid: true}
