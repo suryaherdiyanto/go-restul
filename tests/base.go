@@ -4,12 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/go-faker/faker/v4"
 	"github.com/go-restful/app/controller"
+	"github.com/go-restful/app/model"
 	"github.com/go-restful/app/repository"
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/service"
+	"github.com/go-restful/token"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
@@ -17,8 +20,12 @@ import (
 
 var db *sql.DB
 var userService repository.UserRepository
+var postService repository.PostRepository
 var userController *controller.UserController
 var authController *controller.AuthController
+var postController *controller.PostController
+var accessToken string
+var authUser model.User
 
 func setupTest(tb testing.TB) func(tb testing.TB) {
 	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1)/gorestful_test")
@@ -33,14 +40,17 @@ func setupTest(tb testing.TB) func(tb testing.TB) {
 	}
 
 	userService = service.NewUserService(db)
-	userService.Create(context.Background(), &request.UserRequest{
+	postService = service.NewPostService(db)
+	authUser = userService.Create(context.Background(), &request.UserRequest{
 		FirstName: faker.FirstName(),
 		LastName:  faker.LastName(),
 		Email:     faker.Email(),
 		Password:  "password",
 	})
+	accessToken, _ = token.GenerateToken(&authUser, "thesecrettoken", time.Hour)
 	userController = controller.NewUserController(userService)
 	authController = controller.NewAuthController(userService)
+	postController = controller.NewPostController(postService)
 
 	return func(tb testing.TB) {
 		databaseDown(db, "gorestful_test")
