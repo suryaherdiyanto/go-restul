@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strings"
 	"testing"
 
@@ -26,7 +27,7 @@ func TestCreatePost(t *testing.T) {
 		Content:  faker.Paragraph(),
 	}
 	postJson, _ := json.Marshal(postRequest)
-	claims, err := token.ValidateToken(accessToken, "thesecrettoken")
+	claims, err := token.ValidateToken(accessToken, os.Getenv("JWT_SECRET"))
 
 	if err != nil {
 		t.Errorf("Invalid token: %v", err)
@@ -48,7 +49,7 @@ func TestIndexPosts(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	claims, err := token.ValidateToken(accessToken, "thesecrettoken")
+	claims, err := token.ValidateToken(accessToken, os.Getenv("JWT_SECRET"))
 
 	if err != nil {
 		t.Errorf("Invalid token: %v", err)
@@ -69,7 +70,7 @@ func TestCorrectNumberOfPosts(t *testing.T) {
 	teardownTest := setupTest(t)
 	defer teardownTest(t)
 
-	claims, err := token.ValidateToken(accessToken, "thesecrettoken")
+	claims, err := token.ValidateToken(accessToken, os.Getenv("JWT_SECRET"))
 
 	if err != nil {
 		t.Errorf("Invalid token: %v", err)

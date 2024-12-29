@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/go-restful/app/response"
@@ -25,7 +26,7 @@ func CheckAuth(next httprouter.Handle) httprouter.Handle {
 		}
 
 		tokenHeader = strings.Replace(tokenHeader, "Bearer ", "", 1)
-		claims, err := token.ValidateToken(tokenHeader, "thesecrettoken")
+		claims, err := token.ValidateToken(tokenHeader, os.Getenv("JWT_SECRET"))
 
 		if err != nil {
 			response.JsonResponse(w, response.NewUnAuthorizedResponse(err.Error()))

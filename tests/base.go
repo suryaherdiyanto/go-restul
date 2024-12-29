@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"database/sql"
+	"os"
 	"testing"
 	"time"
 
@@ -28,7 +29,7 @@ var accessToken string
 var authUser model.User
 
 func setupTest(tb testing.TB) func(tb testing.TB) {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1)/gorestful_test")
+	db, err := sql.Open("mysql", os.Getenv("DATABASE_TEST_URL"))
 	if err != nil {
 		tb.Error(err)
 	}
@@ -47,7 +48,7 @@ func setupTest(tb testing.TB) func(tb testing.TB) {
 		Email:     faker.Email(),
 		Password:  "password",
 	})
-	accessToken, _ = token.GenerateToken(&authUser, "thesecrettoken", time.Hour)
+	accessToken, _ = token.GenerateToken(&authUser, os.Getenv("JWT_SECRET"), time.Hour)
 	userController = controller.NewUserController(userService)
 	authController = controller.NewAuthController(userService)
 	postController = controller.NewPostController(postService)

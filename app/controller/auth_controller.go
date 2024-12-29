@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-restful/app/repository"
@@ -78,10 +79,10 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request, _ httprou
 		return
 	}
 
-	authToken, err := token.GenerateToken(&user, "thesecrettoken", time.Hour*24)
+	authToken, err := token.GenerateToken(&user, os.Getenv("JWT_SECRET"), time.Hour*24)
 	helper.ErrorPanic(err)
 
-	refreshToken, err := token.GenerateToken(&user, "thesecrettoken", time.Hour*24*7)
+	refreshToken, err := token.GenerateToken(&user, os.Getenv("JWT_SECRET"), time.Hour*24*7)
 	helper.ErrorPanic(err)
 
 	cookie := &http.Cookie{

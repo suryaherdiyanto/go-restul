@@ -1,0 +1,27 @@
+services:
+  web:
+    build:
+      context: .
+    ports:
+      - 5000:5000
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      JWT_SECRET: thesecretapp
+      DATABASE_URL: "root:root@tcp(mariadb)/restfull"
+      DATABASE_TEST_URL: "root:root@tcp(mariadb)/restfull_test"
+    networks:
+      - app
+  mariadb:
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: goapp
+      MARIADB_PASSWORD: secret
+    networks:
+      - app
+networks:
+  app:
+    driver: bridge

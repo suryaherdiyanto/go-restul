@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 
@@ -43,7 +44,7 @@ func TestSuccessValidateToken(t *testing.T) {
 	r := httptest.NewRequest(http.MethodGet, "/api/users", nil)
 	var claims *token.UserClaims
 
-	jwt, _ := token.GenerateToken(&model.User{Id: 1, FirstName: "john", Email: "johndoe@gmail.com"}, "thesecrettoken", time.Hour)
+	jwt, _ := token.GenerateToken(&model.User{Id: 1, FirstName: "john", Email: "johndoe@gmail.com"}, os.Getenv("JWT_SECRET"), time.Hour)
 	r.Header.Add("Authorization", "Bearer "+jwt)
 	handler := func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		claims = r.Context().Value(UserKey).(*token.UserClaims)

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/go-restful/app/response"
@@ -14,7 +15,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("mysql", "root:root@tcp(127.0.0.1)/gorestful")
+	db, err := sql.Open("mysql", os.Getenv("DATABASE_URL"))
 	db.SetMaxOpenConns(20)
 	db.SetConnMaxLifetime(5 * time.Minute)
 	db.SetMaxIdleConns(15)
