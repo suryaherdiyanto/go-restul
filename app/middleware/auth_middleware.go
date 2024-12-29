@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -9,8 +10,13 @@ import (
 	"github.com/julienschmidt/httprouter"
 )
 
+type key string
+
+const UserKey key = "auth_user"
+
 func CheckAuth(next httprouter.Handle) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
 		tokenHeader := r.Header.Get("Authorization")
 
 		if tokenHeader == "" {
@@ -19,13 +25,14 @@ func CheckAuth(next httprouter.Handle) httprouter.Handle {
 		}
 
 		tokenHeader = strings.Replace(tokenHeader, "Bearer ", "", 1)
-		_, err := token.ValidateToken(tokenHeader, "thesecrettoken")
+		claims, err := token.ValidateToken(tokenHeader, "thesecrettoken")
 
 		if err != nil {
 			response.JsonResponse(w, response.NewUnAuthorizedResponse(err.Error()))
 			return
 		}
+		ctx := context.WithValue(r.Context(), UserKey, claims)
 
-		next(w, r, ps)
+		next(w, r.WithContext(ctx), ps)
 	}
 }

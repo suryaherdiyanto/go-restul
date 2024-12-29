@@ -4,7 +4,10 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
+	"github.com/go-restful/app/model"
+	"github.com/go-restful/token"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -32,5 +35,24 @@ func TestWrongToken(t *testing.T) {
 
 	if w.Code != http.StatusUnauthorized {
 		t.Errorf("Expected: %d, but got %d", http.StatusUnauthorized, w.Code)
+	}
+}
+
+func TestSuccessValidateToken(t *testing.T) {
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodGet, "/api/users", nil)
+	var claims *token.UserClaims
+
+	jwt, _ := token.GenerateToken(&model.User{Id: 1, FirstName: "john", Email: "johndoe@gmail.com"}, "thesecrettoken", time.Hour)
+	r.Header.Add("Authorization", "Bearer "+jwt)
+	handler := func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		claims = r.Context().Value(UserKey).(*token.UserClaims)
+	}
+	authCheckHandler := CheckAuth(handler)
+
+	authCheckHandler(w, r, httprouter.Params{})
+
+	if claims.Email != "johndoe@gmail.com" {
+		t.Errorf("Expected johndoe@gmail.com, but got %v", claims)
 	}
 }
