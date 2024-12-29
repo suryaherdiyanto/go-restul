@@ -12,6 +12,7 @@ import (
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/julienschmidt/httprouter"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,7 +30,7 @@ func TestSuccessRegister(t *testing.T) {
 	userJson, _ := json.Marshal(userRequest)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", strings.NewReader(string(userJson)))
-	routes.ServeHTTP(w, req)
+	authController.Register(w, req, httprouter.Params{})
 
 	res := &response.SuccessResponse{}
 	response.ParseSuccessResponse(w.Body, res)
@@ -62,7 +63,7 @@ func TestFailedRegister(t *testing.T) {
 	userJson, _ := json.Marshal(userRequest)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", strings.NewReader(string(userJson)))
-	routes.ServeHTTP(w, req)
+	authController.Register(w, req, httprouter.Params{})
 
 	if w.Code != 400 {
 		t.Errorf("Expected 400, but got %d", w.Code)
@@ -85,7 +86,7 @@ func TestFailedRegisterIfEmailAlreadyExist(t *testing.T) {
 	userJson, _ := json.Marshal(userRequest)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/auth/register", strings.NewReader(string(userJson)))
-	routes.ServeHTTP(w, req)
+	authController.Register(w, req, httprouter.Params{})
 
 	if w.Code != 400 {
 		t.Errorf("Expected 400, but got %d", w.Code)
@@ -113,7 +114,7 @@ func TestSuccessLogin(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodPost, "/api/auth/login", strings.NewReader(string(loginJson)))
-	routes.ServeHTTP(w, req)
+	authController.Login(w, req, httprouter.Params{})
 
 	if w.Code != 200 {
 		t.Errorf("Expected 200, but got %d", w.Code)

@@ -9,6 +9,7 @@ import (
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/julienschmidt/httprouter"
 )
 
 func TestIndex(t *testing.T) {
@@ -19,7 +20,7 @@ func TestIndex(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest(http.MethodGet, "/api/users", nil)
-	routes.ServeHTTP(w, req)
+	userController.Index(w, req, httprouter.Params{})
 
 	if w.Code != 200 {
 		t.Errorf("Expected 200, but got %d", w.Code)
