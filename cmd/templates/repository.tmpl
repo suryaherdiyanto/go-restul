@@ -1,0 +1,16 @@
+package repository
+
+import (
+	"context"
+
+	"github.com/go-restful/app/model"
+)
+
+type {{.}}Repository interface {
+	FindById(ctx context.Context, id int) (model.{{.}}, bool)
+	FindBy(ctx context.Context, field string, value interface{}) (model.{{.}}, bool)
+	All(ctx context.Context) []model.{{.}}
+	Create(ctx context.Context, data *request.{{.}}Request) model.{{.}}
+	Update(ctx context.Context, id int, data *request.{{.}}UpdateRequest) model.{{.}}
+	Delete(ctx context.Context, id int)
+}

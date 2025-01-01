@@ -1,0 +1,25 @@
+package request
+
+import (
+	"io"
+)
+
+type {{.}}Request struct {
+}
+
+type {{.}}UpdateRequest struct {
+}
+
+func New{{.}}Request(body io.Reader) (*{{.}}Request, error) {
+	r := &{{.}}Request{}
+	Parse(body, r)
+
+	return r, nil
+}
+
+func New{{.}}UpdateRequest(body io.Reader) (*{{.}}UpdateRequest, error) {
+	r := &{{.}}UpdateRequest{}
+	Parse(body, r)
+
+	return r, nil
+}
