@@ -133,17 +133,36 @@ func main() {
 
 	flag.Parse()
 
-	if h {
-		fmt.Println("Usage: artics [-o] <option>")
-		fmt.Println("Options:")
-		fmt.Println("create-model [-n] <model-name> [args]")
-		fmt.Println("Args:")
-		fmt.Println("-r : Create model along with request and repository")
-		fmt.Println("")
+	if h && o == "create-model" {
+		fmt.Println("Available falgs:")
+		fmt.Println("-n: \tModel name")
+		fmt.Print("-r: \tDetermines whether to create request and repository along with model\n\n")
+		return
+	}
+	if h && o == "create-repository" {
+		fmt.Println("Available falgs:")
+		fmt.Println("-n: \tRepository name")
+		return
+	}
+	if h && o == "create-request" {
+		fmt.Println("Available falgs:")
+		fmt.Println("-n: \tRequest name")
+		return
+	}
+	if h && o == "create-controller" {
+		fmt.Println("Available falgs:")
+		fmt.Println("-n: \tController name")
+		return
+	}
 
-		fmt.Println("create-request [-n] <request-name>")
-		fmt.Println("create-repository [-n] <request-name>")
-		fmt.Println("create-controller [-n] <controller-name>")
+	if h {
+		fmt.Println("Usage: artics [-o] <operation>")
+		fmt.Println("Operations:")
+		fmt.Println("create-model: Create a model with given name with -n flag")
+		fmt.Println("create-request: Create a request with given name with -n flag")
+		fmt.Println("create-repository: Create a repository with given name with -n flag")
+		fmt.Println("create-controller: Create a controller with given name with -n flag")
+		fmt.Println("-h: show help")
 		return
 	}
 
