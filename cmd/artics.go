@@ -91,6 +91,33 @@ func createRequest(requestName string) {
 	tmpl.Execute(file, requestName)
 	fmt.Printf("Request created successfully at %s\n", filePath)
 }
+func createController(controllerName string) {
+	filePath := "app/controller/" + helper.ToSnakeCase(controllerName) + "_controller.go"
+	if _, err := os.Stat(filePath); err == nil {
+		fmt.Println("Controller already exists")
+		fmt.Println("===================================")
+		return
+	}
+
+	fmt.Println("Creating controller: ", controllerName)
+	file, err := os.Create(filePath)
+
+	if err != nil {
+		file.Close()
+		panic(err)
+	}
+
+	defer file.Close()
+	tmpl := template.Must(template.New("controller"), nil)
+	tmpl, err = template.ParseFiles("cmd/templates/controller.tmpl")
+	if err != nil {
+		panic(err)
+
+	}
+
+	tmpl.Execute(file, controllerName)
+	fmt.Printf("Controller created successfully at %s\n", filePath)
+}
 
 func main() {
 	var (
@@ -109,13 +136,14 @@ func main() {
 	if h {
 		fmt.Println("Usage: artics [-o] <option>")
 		fmt.Println("Options:")
-		fmt.Println("create-model -n <model-name> [args]")
+		fmt.Println("create-model [-n] <model-name> [args]")
 		fmt.Println("Args:")
 		fmt.Println("-r : Create model along with request and repository")
 		fmt.Println("")
 
-		fmt.Println("create-request -n <request-name>")
-		fmt.Println("create-repository -n <request-name>")
+		fmt.Println("create-request [-n] <request-name>")
+		fmt.Println("create-repository [-n] <request-name>")
+		fmt.Println("create-controller [-n] <controller-name>")
 		return
 	}
 
@@ -133,9 +161,30 @@ func main() {
 			createRequest(modelName)
 		}
 	case "create-repository":
+		repoName := n
+		if repoName == "" {
+			fmt.Println("Repository name is required")
+			return
+
+		}
+
 		createRepository(n)
 	case "create-request":
+		requestName := n
+		if requestName == "" {
+			fmt.Println("Request name is required")
+			return
+		}
+
 		createRequest(n)
+	case "create-controller":
+		controllerName := n
+		if controllerName == "" {
+			fmt.Println("Controller name is required")
+			return
+		}
+
+		createController(controllerName)
 	default:
 		fmt.Println("Invalid command")
 	}

@@ -1,0 +1,30 @@
+
+package controller
+
+import (
+	"net/http"
+
+	"github.com/julienschmidt/httprouter"
+)
+
+type {{.}}Controller struct {
+}
+
+func New{{.}}Controller() *{{.}}Controller {
+	return &{{.}}Controller{}
+}
+
+func (c *{{.}}Controller) Store(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+}
+
+func (c *{{.}}Controller) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+}
+
+func (c *{{.}}Controller) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+}
+
+func (c *{{.}}Controller) Update(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+}
+
+func (c *{{.}}Controller) Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+}
