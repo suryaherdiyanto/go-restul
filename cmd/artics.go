@@ -113,6 +113,9 @@ func main() {
 		fmt.Println("Args:")
 		fmt.Println("-r : Create model along with request and repository")
 		fmt.Println("")
+
+		fmt.Println("create-request -n <request-name>")
+		fmt.Println("create-repository -n <request-name>")
 		return
 	}
 
@@ -129,6 +132,10 @@ func main() {
 			createRepository(modelName)
 			createRequest(modelName)
 		}
+	case "create-repository":
+		createRepository(n)
+	case "create-request":
+		createRequest(n)
 	default:
 		fmt.Println("Invalid command")
 	}
