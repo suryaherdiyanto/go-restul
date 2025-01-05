@@ -5,11 +5,11 @@ import (
 )
 
 type User struct {
-	Id        int
-	FirstName string
-	LastName  sql.NullString
-	Password  string
-	Email     string
-	CreatedAt sql.NullTime
-	UpdatedAt sql.NullTime
+	Id        int            `db:"id"`
+	FirstName string         `db:"first_name"`
+	LastName  sql.NullString `db:"last_name"`
+	Password  string         `db:"password"`
+	Email     string         `db:"email"`
+	CreatedAt sql.NullTime   `db:"created_at"`
+	UpdatedAt sql.NullTime   `db:"updated_at"`
 }

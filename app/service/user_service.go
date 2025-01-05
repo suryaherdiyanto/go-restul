@@ -19,13 +19,14 @@ type UserService struct {
 func (userService *UserService) All(ctx context.Context) []model.User {
 	q := "select * from users"
 
-	row, err := userService.DB.QueryContext(ctx, q)
+	rows, err := userService.DB.QueryContext(ctx, q)
+	defer rows.Close()
 	helper.ErrorPanic(err)
 
 	var users []model.User
-	for row.Next() {
+	for rows.Next() {
 		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
+		model.ScanRow(&user, rows)
 
 		users = append(users, user)
 	}
@@ -36,33 +37,37 @@ func (userService *UserService) All(ctx context.Context) []model.User {
 func (userService *UserService) FindById(ctx context.Context, id int) (model.User, bool) {
 	q := "select * from users where id = ? limit 1"
 
-	row, err := userService.DB.QueryContext(ctx, q, id)
+	rows, err := userService.DB.QueryContext(ctx, q, id)
+	defer rows.Close()
+
 	helper.ErrorPanic(err)
+	var user model.User
+	found := false
 
-	if row.Next() {
-		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
-
-		return user, true
+	if rows.Next() {
+		model.ScanRow(&user, rows)
+		found = true
 	}
 
-	return model.User{}, false
+	return user, found
 }
 
 func (userService *UserService) FindBy(ctx context.Context, field string, value interface{}) (model.User, bool) {
 	q := fmt.Sprintf("select * from users where %s = ? limit 1", field)
 
-	row, err := userService.DB.QueryContext(ctx, q, value)
+	rows, err := userService.DB.QueryContext(ctx, q, value)
+	defer rows.Close()
+
 	helper.ErrorPanic(err)
+	var user model.User
+	found := false
 
-	if row.Next() {
-		var user model.User
-		row.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Password, &user.Email, &user.CreatedAt, &user.UpdatedAt)
-
-		return user, true
+	if rows.Next() {
+		model.ScanRow(&user, rows)
+		found = true
 	}
 
-	return model.User{}, false
+	return user, found
 }
 
 func (userService *UserService) Create(ctx context.Context, data *request.UserRequest) model.User {
