@@ -3,13 +3,13 @@ services:
     build:
       context: .
     ports:
-      - 5000:5000
+      - ${APP_PORT:-5000}:5000
     volumes:
       - ./:/usr/src/app
     environment:
-      JWT_SECRET: thesecretapp
-      DATABASE_URL: "root:root@tcp(mariadb)/restfull"
-      DATABASE_TEST_URL: "root:root@tcp(mariadb)/restfull_test"
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: "root:root@tcp(mariadb)/${DB_NAME}"
+      DATABASE_TEST_URL: "root:root@tcp(mariadb)/${DB_TEST_NAME}"
     networks:
       - app
   mariadb:
