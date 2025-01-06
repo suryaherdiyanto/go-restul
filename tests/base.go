@@ -34,7 +34,7 @@ func setupTest(tb testing.TB) func(tb testing.TB) {
 		tb.Error(err)
 	}
 
-	err = databaseUp(db, "gorestful_test")
+	err = databaseUp(db, os.Getenv("DATABASE_TEST_NAME"))
 
 	if err != nil {
 		tb.Error(err)
@@ -54,7 +54,7 @@ func setupTest(tb testing.TB) func(tb testing.TB) {
 	postController = controller.NewPostController(postService)
 
 	return func(tb testing.TB) {
-		databaseDown(db, "gorestful_test")
+		databaseDown(db, os.Getenv("DATABASE_TEST_NAME"))
 	}
 }
 

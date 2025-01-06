@@ -11,7 +11,6 @@ import (
 	"github.com/go-faker/faker/v4"
 	"github.com/go-restful/app/request"
 	"github.com/go-restful/app/response"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 )
 
