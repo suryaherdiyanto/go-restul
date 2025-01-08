@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 
 	"github.com/go-restful/helper"
 )
@@ -70,12 +71,21 @@ func ScanAll(d interface{}, rows *sql.Rows) error {
 	val.SetLen(0)
 
 	for rows.Next() {
-		v := reflect.New(base)
-		if err := ScanStruct(v.Interface(), rows); err != nil {
-			return err
+		if base.Kind() == reflect.Struct {
+			v := reflect.New(base)
+			if err := ScanStruct(v.Interface(), rows); err != nil {
+				return err
+			}
+			val.Set(reflect.Append(val, reflect.Indirect(v)))
 		}
 
-		val.Set(reflect.Append(val, reflect.Indirect(v)))
+		if base.Kind() == reflect.Map {
+			var m = make(map[string]interface{})
+			if err := ScanMap(&m, rows); err != nil {
+				return err
+			}
+			val.Set(reflect.Append(val, reflect.ValueOf(m)))
+		}
 	}
 
 	return nil
@@ -119,7 +129,15 @@ func ScanMap(d interface{}, rows *sql.Rows) error {
 			reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(float32(value.Interface().(float64))))
 		case reflect.Bool:
 			reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(value.Interface().(bool)))
+		case reflect.Invalid:
+			reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(""))
 		default:
+			if value.Elem().Kind() != reflect.Slice {
+				if value.Elem().Type().Name() == "Time" {
+					reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(value.Interface().(time.Time)))
+					continue
+				}
+			}
 			reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(string(value.Interface().([]byte))))
 		}
 	}
