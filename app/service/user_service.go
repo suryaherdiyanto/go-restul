@@ -26,7 +26,7 @@ func (userService *UserService) All(ctx context.Context) []model.User {
 	var users []model.User
 	for rows.Next() {
 		var user model.User
-		model.ScanRow(&user, rows)
+		model.ScanStruct(&user, rows)
 
 		users = append(users, user)
 	}
@@ -45,7 +45,7 @@ func (userService *UserService) FindById(ctx context.Context, id int) (model.Use
 	found := false
 
 	if rows.Next() {
-		model.ScanRow(&user, rows)
+		model.ScanStruct(&user, rows)
 		found = true
 	}
 
@@ -63,7 +63,7 @@ func (userService *UserService) FindBy(ctx context.Context, field string, value 
 	found := false
 
 	if rows.Next() {
-		model.ScanRow(&user, rows)
+		model.ScanStruct(&user, rows)
 		found = true
 	}
 

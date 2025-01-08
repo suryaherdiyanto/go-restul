@@ -34,7 +34,7 @@ func TestScanStruct(t *testing.T) {
 
 	var userStruct model.User
 	if rows.Next() {
-		model.ScanRow(&userStruct, rows)
+		model.ScanStruct(&userStruct, rows)
 	}
 
 	if userStruct.Email != email {

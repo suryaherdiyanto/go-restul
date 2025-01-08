@@ -9,7 +9,7 @@ import (
 	"github.com/go-restful/helper"
 )
 
-func ScanRow(d interface{}, rows *sql.Rows) error {
+func ScanStruct(d interface{}, rows *sql.Rows) error {
 	columns, err := rows.Columns()
 
 	if err != nil {
