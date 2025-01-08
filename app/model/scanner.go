@@ -107,7 +107,7 @@ func ScanMap(d interface{}, rows *sql.Rows) error {
 		values[i] = &v
 	}
 	if err := rows.Scan(values...); err != nil {
-		panic(err)
+		return err
 	}
 
 	for i, column := range columns {
