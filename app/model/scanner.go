@@ -17,9 +17,11 @@ func ScanStruct(d interface{}, rows *sql.Rows) error {
 	}
 
 	ref := reflect.TypeOf(d)
-	if ref.Kind() == reflect.Ptr {
-		ref = ref.Elem()
+	if ref.Kind() != reflect.Ptr {
+		return errors.New(fmt.Sprintf("The destination must be pointer, passed: %v", ref.Kind()))
 	}
+
+	ref = ref.Elem()
 
 	refKind := ref.Kind()
 	if refKind != reflect.Struct {
@@ -50,13 +52,15 @@ func ScanAll(d interface{}, rows *sql.Rows) error {
 	ref := reflect.TypeOf(d)
 	val := reflect.ValueOf(d)
 
-	if ref.Kind() == reflect.Ptr {
-		ref = ref.Elem()
+	if ref.Kind() != reflect.Ptr {
+		return errors.New(fmt.Sprintf("The destination must be a pointer, passed: %v", ref.Kind()))
 	}
+	ref = ref.Elem()
 
-	if val.Kind() == reflect.Ptr {
-		val = val.Elem()
+	if val.Kind() != reflect.Ptr {
+		return errors.New(fmt.Sprintf("The destination must be a pointer, passed: %v", val.Kind()))
 	}
+	val = val.Elem()
 
 	if ref.Kind() != reflect.Slice {
 		return errors.New(fmt.Sprintf("model.ScanAll only accepts slice kind: %v", ref.Kind()))
@@ -85,9 +89,11 @@ func ScanMap(d interface{}, rows *sql.Rows) error {
 
 	ref := reflect.TypeOf(d)
 
-	if ref.Kind() == reflect.Ptr {
-		ref = ref.Elem()
+	if ref.Kind() != reflect.Ptr {
+		return errors.New(fmt.Sprintf("The destination must be pointer, passed: %v", ref.Kind()))
 	}
+
+	ref = ref.Elem()
 
 	refKind := ref.Kind()
 
