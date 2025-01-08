@@ -70,7 +70,7 @@ func TestScanMap(t *testing.T) {
 
 	var userMap = make(map[string]interface{})
 	if rows.Next() {
-		model.ScanRow(&userMap, rows)
+		model.ScanMap(&userMap, rows)
 	}
 
 	if e, _ := userMap["email"]; e.(string) != email {
