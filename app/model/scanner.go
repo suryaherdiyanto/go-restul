@@ -46,6 +46,37 @@ func ScanStruct(d interface{}, rows *sql.Rows) error {
 
 }
 
+func ScanAll(d interface{}, rows *sql.Rows) error {
+	ref := reflect.TypeOf(d)
+	val := reflect.ValueOf(d)
+
+	if ref.Kind() == reflect.Ptr {
+		ref = ref.Elem()
+	}
+
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+	}
+
+	if ref.Kind() != reflect.Slice {
+		return errors.New(fmt.Sprintf("model.ScanAll only accepts slice kind: %v", ref.Kind()))
+	}
+
+	base := ref.Elem()
+	val.SetLen(0)
+
+	for rows.Next() {
+		v := reflect.New(base)
+		if err := ScanStruct(v.Interface(), rows); err != nil {
+			return err
+		}
+
+		val.Set(reflect.Append(val, reflect.Indirect(v)))
+	}
+
+	return nil
+}
+
 func ScanMap(d interface{}, rows *sql.Rows) error {
 	columns, err := rows.Columns()
 	if err != nil {

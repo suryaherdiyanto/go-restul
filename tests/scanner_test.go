@@ -79,3 +79,34 @@ func TestScanMap(t *testing.T) {
 		t.Errorf("Expected %s, but got %s", email, e)
 	}
 }
+
+func TestScanAll(t *testing.T) {
+	teardownTest := setupTest(t)
+	defer teardownTest(t)
+
+	db, err := sql.Open("mysql", os.Getenv("DATABASE_TEST_URL"))
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = db.Exec("INSERT INTO users(first_name, last_name, email, password, created_at,updated_at) VALUES (?, ?, ?, ?, now(), now())", faker.FirstName(), faker.LastName(), faker.Email(), "password")
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = db.Exec("INSERT INTO users(first_name, last_name, email, password, created_at,updated_at) VALUES (?, ?, ?, ?, now(), now())", faker.FirstName(), faker.LastName(), faker.Email(), "password")
+	if err != nil {
+		t.Error(err)
+	}
+
+	rows, err := db.Query("SELECT * FROM users")
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	var users []model.User
+	if err = model.ScanAll(&users, rows); err != nil {
+		t.Error(err)
+	}
+}
