@@ -42,6 +42,8 @@ func ScanRow(d interface{}, rows *sql.Rows) {
 				reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(int(value.Interface().(int64))))
 			case reflect.Float64:
 				reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(float32(value.Interface().(float64))))
+			case reflect.Bool:
+				reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(value.Interface().(bool)))
 			default:
 				reflect.ValueOf(d).Elem().SetMapIndex(reflect.ValueOf(column), reflect.ValueOf(string(value.Interface().([]byte))))
 			}
