@@ -8,8 +8,8 @@ services:
       - ./:/usr/src/app
     environment:
       JWT_SECRET: ${JWT_SECRET}
-      DATABASE_URL: "root:root@tcp(mariadb)/${DB_NAME}"
-      DATABASE_TEST_URL: "root:root@tcp(mariadb)/${DB_TEST_NAME}"
+      DATABASE_URL: "root:root@tcp(mariadb)/${DB_NAME}?parseTime=true"
+      DATABASE_TEST_URL: "root:root@tcp(mariadb)/${DB_TEST_NAME}?parseTime=true"
       DB_TEST_NAME: ${DB_TEST_NAME}
     networks:
       - app

@@ -37,7 +37,9 @@ func ScanStruct(d interface{}, rows *sql.Rows) error {
 				}
 			}
 		}
-		rows.Scan(dRefs...)
+		if err = rows.Scan(dRefs...); err != nil {
+			return err
+		}
 	}
 
 	return nil

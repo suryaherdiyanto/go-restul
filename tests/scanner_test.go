@@ -26,7 +26,7 @@ func TestScanStruct(t *testing.T) {
 		t.Error(err)
 	}
 
-	rows, err := db.Query("SELECT last_name,email FROM users where email = ? limit 1", email)
+	rows, err := db.Query("SELECT last_name,email,created_at,updated_at FROM users where email = ? limit 1", email)
 
 	if err != nil {
 		t.Error(err)
@@ -34,7 +34,9 @@ func TestScanStruct(t *testing.T) {
 
 	var userStruct model.User
 	if rows.Next() {
-		model.ScanStruct(&userStruct, rows)
+		if err = model.ScanStruct(&userStruct, rows); err != nil {
+			t.Error(err)
+		}
 	}
 
 	if userStruct.Email != email {
