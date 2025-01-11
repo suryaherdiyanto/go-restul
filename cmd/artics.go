@@ -156,12 +156,12 @@ func main() {
 	}
 
 	if h {
-		fmt.Println("Usage: artics [-o] <operation>")
+		fmt.Println("Usage: artics [-o] <operation> [-n] <name>")
 		fmt.Println("Operations:")
-		fmt.Println("create-model: Create a model with given name with -n flag")
-		fmt.Println("create-request: Create a request with given name with -n flag")
-		fmt.Println("create-repository: Create a repository with given name with -n flag")
-		fmt.Println("create-controller: Create a controller with given name with -n flag")
+		fmt.Println("create-model\t\t: Create a model with given name")
+		fmt.Println("create-request\t\t: Create a request with given name")
+		fmt.Println("create-repository\t: Create a repository with given name")
+		fmt.Println("create-controller\t: Create a controller with given name")
 		fmt.Println("-h: show help")
 		return
 	}
