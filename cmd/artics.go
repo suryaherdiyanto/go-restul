@@ -134,23 +134,23 @@ func main() {
 	flag.Parse()
 
 	if h && o == "create-model" {
-		fmt.Println("Available falgs:")
+		fmt.Println("Available flags:")
 		fmt.Println("-n: \tModel name")
 		fmt.Print("-r: \tDetermines whether to create request and repository along with model\n\n")
 		return
 	}
 	if h && o == "create-repository" {
-		fmt.Println("Available falgs:")
+		fmt.Println("Available flags:")
 		fmt.Println("-n: \tRepository name")
 		return
 	}
 	if h && o == "create-request" {
-		fmt.Println("Available falgs:")
+		fmt.Println("Available flags:")
 		fmt.Println("-n: \tRequest name")
 		return
 	}
 	if h && o == "create-controller" {
-		fmt.Println("Available falgs:")
+		fmt.Println("Available flags:")
 		fmt.Println("-n: \tController name")
 		return
 	}
