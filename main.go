@@ -33,7 +33,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":5000",
-		Handler: middleware.DBMiddleware(router),
+		Handler: middleware.Logging(middleware.DBMiddleware(router)),
 	}
 
 	fmt.Println("Server is running on :5000")
