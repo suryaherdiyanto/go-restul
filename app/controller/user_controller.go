@@ -25,19 +25,13 @@ func NewUserController(userRepository repository.UserRepository) *UserController
 }
 
 func (c *UserController) Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
-	defer cancel()
-
-	users := c.UserRepository.All(ctx)
+	users := c.UserRepository.All(r.Context())
 
 	res := response.NewSuccessResponse(resource.NewUsersResource(&users))
 	response.JsonResponse(w, res)
 }
 
 func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
-	defer cancel()
-
 	id, err := strconv.Atoi(ps.ByName("id"))
 
 	if err != nil {
@@ -45,7 +39,7 @@ func (c *UserController) Show(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	user, ok := c.UserRepository.FindById(ctx, id)
+	user, ok := c.UserRepository.FindById(r.Context(), id)
 
 	if !ok {
 		response.HandleNotFound(w, "Resource not found!")
@@ -61,9 +55,6 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request, ps httpr
 	helper.ErrorPanic(err)
 	r.Header.Set("Content-Type", "application/json")
 
-	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
-	defer cancel()
-
 	userRequest, err := request.NewUserUpdateRequest(r.Body)
 
 	helper.ErrorPanic(err)
@@ -75,7 +66,7 @@ func (c *UserController) Update(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	user := c.UserRepository.Update(ctx, id, userRequest)
+	user := c.UserRepository.Update(r.Context(), id, userRequest)
 
 	response.JsonResponse(w, response.NewSuccessResponse(resource.NewUserResource(&user)))
 

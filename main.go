@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/go-restful/app/middleware"
 	"github.com/go-restful/app/response"
 	"github.com/go-restful/app/router"
 	"github.com/go-restful/helper"
@@ -20,7 +21,9 @@ func main() {
 	db.SetConnMaxLifetime(5 * time.Minute)
 	db.SetMaxIdleConns(15)
 
-	helper.ErrorPanic(err)
+	if err != nil {
+		panic(err)
+	}
 
 	router := router.NewRouter(db)
 
@@ -30,7 +33,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":5000",
-		Handler: router,
+		Handler: middleware.DBMiddleware(router),
 	}
 
 	fmt.Println("Server is running on :5000")

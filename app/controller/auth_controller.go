@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -28,9 +27,6 @@ func NewAuthController(repo repository.UserRepository) *AuthController {
 }
 
 func (c AuthController) Register(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
-	defer cancel()
-
 	userRequest, err := request.NewUserRequest(r.Body)
 
 	helper.ErrorPanic(err)
@@ -42,7 +38,7 @@ func (c AuthController) Register(w http.ResponseWriter, r *http.Request, _ httpr
 		return
 	}
 
-	if _, ok = c.UserRepository.FindBy(ctx, "email", userRequest.Email); ok {
+	if _, ok = c.UserRepository.FindBy(r.Context(), "email", userRequest.Email); ok {
 		response.JsonResponse(w, response.NewBadRequestResponse("Validation Error!", &map[string][]interface{}{
 			"email": {fmt.Sprintf("The email: %s, is already been taken", userRequest.Email)},
 		}))
@@ -54,20 +50,17 @@ func (c AuthController) Register(w http.ResponseWriter, r *http.Request, _ httpr
 	helper.ErrorPanic(err)
 	userRequest.Password = string(hashPassword)
 
-	user := c.UserRepository.Create(ctx, userRequest)
+	user := c.UserRepository.Create(r.Context(), userRequest)
 
 	response.JsonResponse(w, response.NewCreatedResponse("Register Successfully!", resource.NewUserResource(&user)))
 }
 
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	ctx, cancel := context.WithTimeout(r.Context(), time.Second*5)
-	defer cancel()
-
 	userRequest, err := request.NewLoginRequest(r.Body)
 
 	helper.ErrorPanic(err)
 
-	user, ok := c.UserRepository.FindBy(ctx, "email", userRequest.Email)
+	user, ok := c.UserRepository.FindBy(r.Context(), "email", userRequest.Email)
 
 	if !ok {
 		response.JsonResponse(w, response.NewBadRequestResponse("Invalid email or password!", nil))
